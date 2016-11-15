@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Buttcoin</string>
+    <string-array name="ticker_titles">
+        <item>15m: </item>
+        <item>Last: </item>
+        <item>Buy: </item>
+        <item>Sell: </item>
+    </string-array>
+    <string-array name="block_titles">
+        <item>Block Number</item>
+        <item>Hash</item>
+        <item>Version</item>
+        <item>Confirmations</item>
+        <item>Time</item>
+        <item>nb_txs</item>
+        <item>Merkleroot</item>
+        <item>Next Block Number</item>
+        <item>Previous Block Number</item>
+        <item>Next Block Hash</item>
+        <item>Previous Block Hash</item>
+        <item>Fee</item>
+        <item>Vout Sum</item>
+        <item>Size</item>
+        <item>Difficulty</item>
+        <item>Days Destroyed</item>
+        <item>Extras</item>
+    </string-array>
+</resources>
