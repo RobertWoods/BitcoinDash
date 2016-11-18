@@ -1,6 +1,9 @@
 package edu.temple.buttcoin;
 
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -13,36 +16,31 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements ResponseListener {
+public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BitcoinExchangeFetcher fetcher = new BitcoinExchangeFetcher(this);
-        try {
-            fetcher.execute(new URL("https://blockchain.info/ticker"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        BitcoinChartFetcher chartFetcher = new BitcoinChartFetcher(this);
-        try {
-            chartFetcher.execute(new URL("https://chart.yahoo.com/z?s=BTCUSD=X&t=1d"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        BitcoinBlockFetcher blockFetcher = new BitcoinBlockFetcher(this);
-        try {
-            blockFetcher.execute(new URL("http://btc.blockr.io/api/v1/block/info/223213,223214,223215,223216,223217"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        BitcoinBalanceFetcher balanceFetcher = new BitcoinBalanceFetcher(this);
-        try {
-            balanceFetcher.execute(new URL("http://btc.blockr.io/api/v1/address/balance/1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        final Fragment[] fragments = new Fragment[]{
+                new BlockFragment(),
+                new BalanceFragment(),
+                new ExchangeFragment(),
+                new ChartFragment()
+        };
+        FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public int getCount() {
+                return fragments.length;
+            }
+
+            @Override
+            public Fragment getItem(int position) {
+                return fragments[position];
+            }
+        };
+        ViewPager vp = (ViewPager) findViewById(R.id.screenFrame);
+        vp.setAdapter(adapter);
 
 //        BarcodeDetector detector = new BarcodeDetector.Builder(getApplicationContext())
 //                .setBarcodeFormats(Barcode.QR_CODE).build();
@@ -50,30 +48,7 @@ public class MainActivity extends AppCompatActivity implements ResponseListener 
 //        Barcode
     }
 
-    @Override
-    public void respondToResult(ArrayList<Double> result) {
-        String s = "";
-        String[] titles = getResources().getStringArray(R.array.ticker_titles);
-        for (int i = 0; i < result.size(); i++) {
-            s = s + titles[i];
-            s = s + result.get(i) + "\n";
-        }
-        ((TextView) findViewById(R.id.textCatcher)).setText(s);
-    }
 
-    @Override
-    public void respondToResult(Drawable result) {
-        ((ImageView) findViewById(R.id.imageView)).setImageDrawable(result);
-    }
 
-    @Override
-    public void respondToResult(String[][] result) {
-        String[] titles = getResources().getStringArray(R.array.block_titles);
-        ((TextView) findViewById(R.id.textCatcher)).setText(result[0][16]);
-    }
 
-    @Override
-    public void respondToResult(String result) {
-        ((TextView) findViewById(R.id.textCatcher)).setText(result);
-    }
 }
