@@ -45,7 +45,7 @@ public class BalanceFragment extends Fragment implements ResponseListener<String
 
     public void startWalletFetcher(String walletId){
 
-        Fetcher<Void, String> fetcher = new Fetcher<Void, String>(this) {
+        Fetcher<String> fetcher = new Fetcher<String>(this) {
             @Override
             protected String getDataFromReader(JsonReader reader) throws IOException {
                 reader.beginObject();

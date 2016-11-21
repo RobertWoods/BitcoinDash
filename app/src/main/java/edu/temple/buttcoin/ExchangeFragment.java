@@ -39,7 +39,7 @@ public class ExchangeFragment extends Fragment implements ResponseListener<Array
     }
 
     void startExchangeFetcher() {
-        Fetcher<Void, ArrayList<Double>> fetcher = new Fetcher<Void, ArrayList<Double>>(this) {
+        Fetcher<ArrayList<Double>> fetcher = new Fetcher<ArrayList<Double>>(this) {
             @Override
             protected ArrayList<Double> getDataFromReader(JsonReader reader) throws IOException {
                 ArrayList<Double> values = new ArrayList<Double>();

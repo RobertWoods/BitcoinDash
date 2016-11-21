@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.JsonReader;
 import android.util.JsonToken;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -42,6 +40,7 @@ public class BlockFragment extends Fragment implements ResponseListener<String[]
                 startBlockFetcher(blockId);
             }
         });
+        
         return v;
     }
 
@@ -58,7 +57,7 @@ public class BlockFragment extends Fragment implements ResponseListener<String[]
         }
         s = s.substring(0, s.length()-1);
 
-        Fetcher<Void, String[][]> fetcher = new Fetcher<Void, String[][]>(this) {
+        Fetcher<String[][]> fetcher = new Fetcher<String[][]>(this) {
 
             protected String[][] getDataFromReader(JsonReader reader) throws IOException {
                 String[][] data = new String[5][17];

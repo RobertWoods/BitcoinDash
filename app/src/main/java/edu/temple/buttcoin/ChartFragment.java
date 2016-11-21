@@ -47,7 +47,7 @@ public class ChartFragment extends Fragment implements ResponseListener<Drawable
 
     private void startChartFetcher(String chartRange) {
 
-        Fetcher<Void, Drawable> fetcher = new Fetcher<Void, Drawable>(this) {
+        Fetcher<Drawable> fetcher = new Fetcher<Drawable>(this) {
             @Override
             protected Drawable getDataFromReader(JsonReader reader) throws IOException {
                 return null;

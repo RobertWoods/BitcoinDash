@@ -14,7 +14,7 @@ import java.net.HttpURLConnection;
  * Created by rober_000 on 11/18/2016.
  */
 
-public abstract class Fetcher<E, T> extends AsyncTask<URL, E, T> {
+public abstract class Fetcher<T> extends AsyncTask<URL, Void, T> {
 
     ResponseListener<T> listener;
 
@@ -31,7 +31,6 @@ public abstract class Fetcher<E, T> extends AsyncTask<URL, E, T> {
         } catch (IOException e) {
 
         }
-
         return result;
     }
 
