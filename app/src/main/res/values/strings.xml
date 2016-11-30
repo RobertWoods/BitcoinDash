@@ -26,5 +26,6 @@
         <item>Extras</item>
     </string-array>
 
+    <string name="go_button">Go</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

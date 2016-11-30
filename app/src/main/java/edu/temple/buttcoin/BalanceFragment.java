@@ -3,25 +3,21 @@ package edu.temple.buttcoin;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.JsonReader;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BalanceFragment extends Fragment implements ResponseListener<String> {
+public class BalanceFragment extends Fragment implements BalanceSelectorFragment.SelectionListener {
 
 
-    private final String API_URL = "http://btc.blockr.io/api/v1/address/balance/";
+    private final int GET_QR_IMAGE = 1623;
+    private boolean twoPanes = false;
 
     public BalanceFragment() {
         // Required empty public constructor
@@ -33,43 +29,23 @@ public class BalanceFragment extends Fragment implements ResponseListener<String
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
-        v.findViewById(R.id.getWalletButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String walletId = ((EditText) getView().findViewById(R.id.walletInput)).getText().toString();
-                startWalletFetcher(walletId);
-            }
-        });
+
+
+        twoPanes = v.findViewById(R.id.detailsPane) != null;
+        FragmentManager fm = getChildFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction().replace(R.id.selectFrame, new BalanceSelectorFragment());
+        if(twoPanes) ft = ft.add(R.id.detailsPane, new Fragment());
+        ft.commit();
         return v;
-    }
-
-    public void startWalletFetcher(String walletId){
-
-        Fetcher<String> fetcher = new Fetcher<String>(this) {
-            @Override
-            protected String getDataFromReader(JsonReader reader) throws IOException {
-                reader.beginObject();
-                reader.nextName();
-                reader.nextString();
-                reader.nextName();
-                reader.beginObject();
-                reader.nextName();
-                reader.nextString();
-                reader.nextName();
-                return reader.nextString();
-            }
-        };
-        try {
-            fetcher.execute(new URL(API_URL+walletId));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
     }
 
 
     @Override
-    public void respondToResult(String result) {
-        ((TextView) getView().findViewById(R.id.walletInfo)).setText("Wallet balance: " + result);
+    public void showWalletAddress(String walletId, String balance) {
+        BalanceViewerFragment bvFrag = new BalanceViewerFragment();
+        int layoutId = twoPanes ? R.id.detailsPane : R.id.selectFrame;
+        getChildFragmentManager().beginTransaction().replace(layoutId, bvFrag).commit();
+        getChildFragmentManager().executePendingTransactions();
+        bvFrag.showWalletAddress(walletId, balance);
     }
 }

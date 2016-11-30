@@ -1,14 +1,13 @@
 package edu.temple.buttcoin;
 
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.JsonReader;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Created by rober_000 on 11/18/2016.

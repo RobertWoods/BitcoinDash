@@ -1,20 +1,10 @@
 package edu.temple.buttcoin;
 
-import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -26,7 +16,7 @@ public class MainActivity extends AppCompatActivity  {
                 new BlockFragment(),
                 new BalanceFragment(),
                 new ExchangeFragment(),
-                new ChartFragment()
+                new ChartFragment(),
         };
         FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -42,13 +32,7 @@ public class MainActivity extends AppCompatActivity  {
         ViewPager vp = (ViewPager) findViewById(R.id.screenFrame);
         vp.setAdapter(adapter);
 
-//        BarcodeDetector detector = new BarcodeDetector.Builder(getApplicationContext())
-//                .setBarcodeFormats(Barcode.QR_CODE).build();
-//        Barcode QRs have raw string format: 'bitcoin:<address>'
-//        Barcode
     }
-
-
 
 
 }

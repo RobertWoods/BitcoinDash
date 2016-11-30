@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="edu.temple.buttcoin.BalanceFragment">
+
+
+    <EditText
+        android:id="@+id/walletInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/getWalletButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/go_button"/>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@android:drawable/ic_menu_camera"
+            android:background="@android:color/transparent"
+            android:id="@+id/getWalletFromQRButton"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/walletInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_blank_fragment" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView" />
+
+
+</LinearLayout>
