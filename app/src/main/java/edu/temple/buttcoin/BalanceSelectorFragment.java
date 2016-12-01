@@ -42,6 +42,8 @@ public class BalanceSelectorFragment extends Fragment {
         BitcoinDbHelper dbHelper = new BitcoinDbHelper(getContext());
         db = dbHelper.getWritableDatabase();
         wallets = getWallets();
+        insertNewWallet("", "");
+        insertNewWallet("12", "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX");
         wallets.keySet();
         final BaseAdapter adapter = new BaseAdapter() {
             @Override
