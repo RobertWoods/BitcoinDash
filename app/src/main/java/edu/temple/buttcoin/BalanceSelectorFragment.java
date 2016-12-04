@@ -42,17 +42,17 @@ public class BalanceSelectorFragment extends Fragment {
         BitcoinDbHelper dbHelper = new BitcoinDbHelper(getContext());
         db = dbHelper.getWritableDatabase();
         wallets = getWallets();
-        insertNewWallet(12, "1JEiV9CiJmhfYhE7MzeSdmH82xRYrbYrtb1");
+//        insertNewWallet(12, "1JEiV9CiJmhfYhE7MzeSdmH82xRYrbYrtb");
         final BaseAdapter adapter = new BaseAdapter() {
             @Override
             public int getCount() {
-                return wallets.size()+1;
+                return wallets.size()+2;
             }
 
             @Override
             public Object getItem(int i) {
-                if(i == 0) return "Please Select a meme";
-                if(i == 1) return "Insert new wallet";
+                if(i == 0) return getResources().getString(R.string.select_option);
+                if(i == 1) return getResources().getString(R.string.get_new_wallet);
                 return wallets.keySet().toArray()[i-2];
             }
 
@@ -83,8 +83,10 @@ public class BalanceSelectorFragment extends Fragment {
         ((Spinner) v.findViewById(R.id.walletSelector)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String walletId = i < 2 ? "" : adapter.getItem(i).toString();
+                String balance  = i < 2 ? "" : wallets.get(wallets.keySet().toArray()[i - 2]);
                 if(i!=0)
-                    listener.showWalletAddress(adapter.getItem(i).toString(), wallets.get(adapter.getItem(i)));
+                    listener.showWalletAddress(walletId, balance);
             }
 
             @Override
@@ -106,11 +108,11 @@ public class BalanceSelectorFragment extends Fragment {
     }
 
     private void insertNewWallet(int balance, String walletId) {
-        if (!wallets.containsKey(walletId)) {
+            if (!wallets.containsKey(walletId)) {
             ContentValues values = new ContentValues();
-            values.put(BitcoinDbHelper.COLUMN_NAME_BALANCE, balance);
-            values.put(BitcoinDbHelper.COLUMN_NAME_NUMBER, walletId);
-            db.insertOrThrow(BitcoinDbHelper.TABLE_NAME, null, values);
+            values.put(BitcoinDbHelper.AddressesContract.COLUMN_NAME_BALANCE, balance);
+            values.put(BitcoinDbHelper.AddressesContract.COLUMN_NAME_NUMBER, walletId);
+            db.insertOrThrow(BitcoinDbHelper.AddressesContract.TABLE_NAME, null, values);
             wallets.put(walletId, String.valueOf(balance));
         }
     }
@@ -118,14 +120,17 @@ public class BalanceSelectorFragment extends Fragment {
     private HashMap<String, String> getWallets() {
         HashMap<String, String> wallets = new HashMap<>();
         Cursor c = db.query(
-                BitcoinDbHelper.TABLE_NAME,
-                new String[]{BitcoinDbHelper.COLUMN_NAME_NUMBER, BitcoinDbHelper.COLUMN_NAME_BALANCE},
+                BitcoinDbHelper.AddressesContract.TABLE_NAME,
+                new String[]{BitcoinDbHelper.AddressesContract.COLUMN_NAME_NUMBER,
+                        BitcoinDbHelper.AddressesContract.COLUMN_NAME_BALANCE},
                 null, null, null, null, null
         );
         c.moveToFirst();
         while (c.moveToNext()) {
-            wallets.put(c.getString(c.getColumnIndex(BitcoinDbHelper.COLUMN_NAME_NUMBER)),
-                    c.getString(c.getColumnIndex(BitcoinDbHelper.COLUMN_NAME_BALANCE)));
+            wallets.put(c.getString(c.getColumnIndex(
+                    BitcoinDbHelper.AddressesContract.COLUMN_NAME_NUMBER)),
+                    c.getString(c.getColumnIndex(
+                            BitcoinDbHelper.AddressesContract.COLUMN_NAME_BALANCE)));
         }
         return wallets;
     }

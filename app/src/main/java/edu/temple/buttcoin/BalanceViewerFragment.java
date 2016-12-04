@@ -46,7 +46,7 @@ public class BalanceViewerFragment extends Fragment implements ResponseListener<
         // Required empty public constructor
     }
 
-
+    //TODO change this class so BalanceFragment uses bundles instead of public method to create EditText text
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -152,13 +152,13 @@ public class BalanceViewerFragment extends Fragment implements ResponseListener<
     @Override
     public void respondToResult(String result) {
         ((TextView) getView().findViewById(R.id.walletInfo)).setText("Wallet balance: " + result + " BTC");
-
+        if(result.equals("0")) return; //Don't wanna store empty wallets
         BitcoinDbHelper bitcoinDbHelper = new BitcoinDbHelper(getContext());
         ContentValues values = new ContentValues();
-        values.put(BitcoinDbHelper.COLUMN_NAME_NUMBER, currentWallet);
-        values.put(BitcoinDbHelper.COLUMN_NAME_BALANCE, result);
+        values.put(BitcoinDbHelper.AddressesContract.COLUMN_NAME_NUMBER, currentWallet);
+        values.put(BitcoinDbHelper.AddressesContract.COLUMN_NAME_BALANCE, result);
         SQLiteDatabase db = bitcoinDbHelper.getWritableDatabase();
-        db.insertOrThrow(BitcoinDbHelper.TABLE_NAME, null, values);
+        db.insertOrThrow(BitcoinDbHelper.AddressesContract.TABLE_NAME, null, values);
     }
 
     public void showWalletAddress(String walletId, String balance) {
