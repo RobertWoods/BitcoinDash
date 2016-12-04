@@ -3,6 +3,9 @@ package edu.temple.buttcoin;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.JsonReader;
 import android.util.JsonToken;
 import android.view.LayoutInflater;
@@ -22,6 +25,9 @@ import java.net.URL;
 public class BlockFragment extends Fragment implements ResponseListener<String[][]> {
 
     private static String API_URL = "http://btc.blockr.io/api/v1/block/info/";
+    private String[][] currentBlocks = new String[0][0];
+    private FragmentStatePagerAdapter pagerAdapter;
+    private ViewPager pager;
 
     public BlockFragment() {
         // Required empty public constructor
@@ -33,6 +39,23 @@ public class BlockFragment extends Fragment implements ResponseListener<String[]
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_block, container, false);
+        pager = (ViewPager) v.findViewById(R.id.blockViewer);
+        pagerAdapter = new FragmentStatePagerAdapter(getChildFragmentManager()){
+            @Override
+            public Fragment getItem(int position) {
+                BlockPageFragment blockPageFragment = new BlockPageFragment();
+                Bundle bundle = new Bundle();
+                bundle.putStringArray(BlockPageFragment.DATA, currentBlocks[position]);
+                blockPageFragment.setArguments(bundle);
+                return blockPageFragment;
+            }
+
+            @Override
+            public int getCount() {
+                return currentBlocks.length;
+            }
+        };
+        pager.setAdapter(pagerAdapter);
         v.findViewById(R.id.getBlockButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,12 +118,9 @@ public class BlockFragment extends Fragment implements ResponseListener<String[]
 
     @Override
     public void respondToResult(String[][] result) {
-        String[] titles = getResources().getStringArray(R.array.block_titles);
-        String s = "";
-        for(int i=0;i<titles.length;i++){
-            s = s + titles[i] + " " + result[2][i] + "\n";
-        }
-        ((TextView) getView().findViewById(R.id.blockInfo)).setText(s);
+        currentBlocks = result;
+        pagerAdapter.notifyDataSetChanged();
+        pager.setCurrentItem(2);
     }
 
 }
