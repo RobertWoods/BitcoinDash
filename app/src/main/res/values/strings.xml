@@ -25,7 +25,15 @@
         <item>Days Destroyed</item>
         <item>Extras</item>
     </string-array>
+    <string-array name="fragment_descriptors">
+        <item> View Block Info </item>
+        <item> View Wallet Balance </item>
+        <item> View Exchange Rates </item>
+        <item> View Price Chart </item>
+    </string-array>
 
     <string name="go_button">Go</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="back_button">Back</string>
+    <string name="add_to_database">Store</string>
 </resources>

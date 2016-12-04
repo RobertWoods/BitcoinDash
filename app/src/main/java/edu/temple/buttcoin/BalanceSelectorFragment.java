@@ -42,9 +42,7 @@ public class BalanceSelectorFragment extends Fragment {
         BitcoinDbHelper dbHelper = new BitcoinDbHelper(getContext());
         db = dbHelper.getWritableDatabase();
         wallets = getWallets();
-        insertNewWallet("", "");
-        insertNewWallet("12", "1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX");
-        wallets.keySet();
+        insertNewWallet(12, "1JEiV9CiJmhfYhE7MzeSdmH82xRYrbYrtb1");
         final BaseAdapter adapter = new BaseAdapter() {
             @Override
             public int getCount() {
@@ -54,7 +52,8 @@ public class BalanceSelectorFragment extends Fragment {
             @Override
             public Object getItem(int i) {
                 if(i == 0) return "Please Select a meme";
-                return wallets.keySet().toArray()[i-1];
+                if(i == 1) return "Insert new wallet";
+                return wallets.keySet().toArray()[i-2];
             }
 
             @Override
@@ -100,20 +99,19 @@ public class BalanceSelectorFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            //TODO change MainActivity to implement interface, because this attaches to the Activity not the fragment
             listener = (SelectionListener) context;
         } catch (ClassCastException e) {
             Log.d("really", "makes you think:" + context.getClass());
         }
     }
 
-    private void insertNewWallet(String balance, String walletId) {
+    private void insertNewWallet(int balance, String walletId) {
         if (!wallets.containsKey(walletId)) {
             ContentValues values = new ContentValues();
             values.put(BitcoinDbHelper.COLUMN_NAME_BALANCE, balance);
             values.put(BitcoinDbHelper.COLUMN_NAME_NUMBER, walletId);
-            db.insert(BitcoinDbHelper.TABLE_NAME, null, values);
-            wallets.put(walletId, balance);
+            db.insertOrThrow(BitcoinDbHelper.TABLE_NAME, null, values);
+            wallets.put(walletId, String.valueOf(balance));
         }
     }
 

@@ -2,7 +2,10 @@ package edu.temple.buttcoin;
 
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,6 +38,8 @@ public class BalanceViewerFragment extends Fragment implements ResponseListener<
 
     private final int GET_QR_IMAGE = 1314;
     private final String API_URL = "http://btc.blockr.io/api/v1/address/balance/";
+    BalanceViewerListener listener;
+    private String currentWallet = "";
 
 
     public BalanceViewerFragment() {
@@ -69,12 +74,20 @@ public class BalanceViewerFragment extends Fragment implements ResponseListener<
                 startActivityForResult(intent, GET_QR_IMAGE);
             }
         });
+        if(v.findViewById(R.id.popFromStackButton)!=null) {
+            v.findViewById(R.id.popFromStackButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.removeFromBackStack();
+                }
+            });
+        }
 
         return v;
     }
 
     public void startWalletFetcher(String walletId){
-
+        currentWallet = walletId;
         Fetcher<String> fetcher = new Fetcher<String>(this) {
             @Override
             protected String getDataFromReader(JsonReader reader) throws IOException {
@@ -129,12 +142,31 @@ public class BalanceViewerFragment extends Fragment implements ResponseListener<
     }
 
     @Override
+    public void onAttach(Context c){
+        super.onAttach(c);
+        try {
+            listener = (BalanceViewerListener) c;
+        } catch(Exception e) { }
+    }
+
+    @Override
     public void respondToResult(String result) {
         ((TextView) getView().findViewById(R.id.walletInfo)).setText("Wallet balance: " + result + " BTC");
+
+        BitcoinDbHelper bitcoinDbHelper = new BitcoinDbHelper(getContext());
+        ContentValues values = new ContentValues();
+        values.put(BitcoinDbHelper.COLUMN_NAME_NUMBER, currentWallet);
+        values.put(BitcoinDbHelper.COLUMN_NAME_BALANCE, result);
+        SQLiteDatabase db = bitcoinDbHelper.getWritableDatabase();
+        db.insertOrThrow(BitcoinDbHelper.TABLE_NAME, null, values);
     }
 
     public void showWalletAddress(String walletId, String balance) {
         ((EditText) getView().findViewById(R.id.walletInput)).setText(walletId);
         ((TextView) getView().findViewById(R.id.walletInfo)).setText("Wallet balance: " + balance + " BTC");
+    }
+
+    public interface BalanceViewerListener {
+        void removeFromBackStack();
     }
 }

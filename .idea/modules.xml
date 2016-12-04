@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BitcoinDash.iml" filepath="$PROJECT_DIR$/BitcoinDash.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Buttcoin.iml" filepath="$PROJECT_DIR$/Buttcoin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BalanceFragment extends Fragment implements BalanceSelectorFragment.SelectionListener {
+public class BalanceFragment extends Fragment {
 
 
     private final int GET_QR_IMAGE = 1623;
@@ -33,19 +33,31 @@ public class BalanceFragment extends Fragment implements BalanceSelectorFragment
 
         twoPanes = v.findViewById(R.id.detailsPane) != null;
         FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction().replace(R.id.selectFrame, new BalanceSelectorFragment());
+        FragmentTransaction ft = fm.beginTransaction()
+                .replace(R.id.selectFrame, new BalanceSelectorFragment());
         if(twoPanes) ft = ft.add(R.id.detailsPane, new Fragment());
-        ft.commit();
+        ft.addToBackStack(null).commit();
         return v;
     }
 
 
-    @Override
     public void showWalletAddress(String walletId, String balance) {
         BalanceViewerFragment bvFrag = new BalanceViewerFragment();
         int layoutId = twoPanes ? R.id.detailsPane : R.id.selectFrame;
-        getChildFragmentManager().beginTransaction().replace(layoutId, bvFrag).commit();
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(layoutId, bvFrag)
+                .addToBackStack(null)
+                .commit();
         getChildFragmentManager().executePendingTransactions();
         bvFrag.showWalletAddress(walletId, balance);
     }
+
+    public void removeFromBackStack() {
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.selectFrame, new BalanceSelectorFragment())
+                .commit();
+    }
+
 }

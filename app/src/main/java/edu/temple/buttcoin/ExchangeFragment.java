@@ -32,8 +32,12 @@ public class ExchangeFragment extends Fragment implements ResponseListener<Array
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_exchange, container, false);
-        startExchangeFetcher();
         return v;
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        startExchangeFetcher();
     }
 
     void startExchangeFetcher() {

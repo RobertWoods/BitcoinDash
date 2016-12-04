@@ -11,7 +11,7 @@
         android:id="@+id/walletInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"/>
+        android:text="1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,12 +23,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/go_button"/>
-
-        <Button
-            android:id="@+id/popFromStackButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/back_button"/>
 
         <Button
             android:layout_width="wrap_content"
