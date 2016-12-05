@@ -13,7 +13,7 @@ import android.widget.TextView;
  * A simple {@link Fragment} subclass.
  */
 public class BlockPageFragment extends Fragment {
-    public static String DATA = "fsadfafgaeg";
+    public static String DATA = "Dr Morris Wears Nice Sweaters";
 
     public BlockPageFragment() {
         // Required empty public constructor

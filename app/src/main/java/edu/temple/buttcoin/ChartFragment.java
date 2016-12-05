@@ -29,7 +29,7 @@ import java.net.URL;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChartFragment extends Fragment implements ResponseListener<Drawable>, SetupListener {
+public class ChartFragment extends Fragment implements ResponseListener<Drawable[]> {
 
     private final String API_URL = "https://chart.yahoo.com/z?s=BTCUSD=X&t=";
     FragmentStatePagerAdapter adapter;
@@ -69,29 +69,31 @@ public class ChartFragment extends Fragment implements ResponseListener<Drawable
         getCharts();
     }
 
-    private void startChartFetcher(String chartRange) {
+    private void startChartFetcher() {
 
-        Fetcher<Drawable> fetcher = new Fetcher<Drawable>(this) {
+        Fetcher<Drawable[]> fetcher = new Fetcher<Drawable[]>(this) {
             @Override
-            protected Drawable getDataFromReader(JsonReader reader) throws IOException {
+            protected Drawable[] getDataFromReader(JsonReader reader) throws IOException {
                 return null;
             }
 
             @Override
-            protected Drawable doInBackground(URL... urls) {
+            protected Drawable[] doInBackground(URL... urls) {
+                Drawable[] data = new Drawable[4];
+                String[] key = new String[] {"1d", "7d", "14d", "30d"};
                 try {
-                    return Drawable.createFromStream((InputStream) urls[0].getContent(), "");
+                    for(int i=0; i<data.length; i++) {
+                        data[i] = Drawable.createFromStream((InputStream)
+                                new URL(API_URL+key[i]).getContent(), "");
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;
                 }
+                return data;
             }
         };
-        try {
-            fetcher.execute(new URL(API_URL + chartRange));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        fetcher.execute();
     }
 
     public void getCharts(){
@@ -100,21 +102,23 @@ public class ChartFragment extends Fragment implements ResponseListener<Drawable
         if(db.query(BitcoinDbHelper.StocksContract.TABLE_NAME,
                 new String[] {BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D},
                 null, null, null, null, null).getCount() == 0){
-            for(String s : new String[]{"1d", "7d", "14d", "30d"}){
-                startChartFetcher(s);
-            }
+                startChartFetcher();
         }
     }
 
     @Override
-    public void respondToResult(Drawable result) {
+    public void respondToResult(Drawable[] results) {
         BitcoinDbHelper dbHelper = new BitcoinDbHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D,
-                getBlobFromDrawable(result));
-        db.insert(BitcoinDbHelper.StocksContract.TABLE_NAME, null, values);
+        for(Drawable d : results) {
+            ContentValues values = new ContentValues();
+            values.put(BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D,
+                    getBlobFromDrawable(d));
+            db.insert(BitcoinDbHelper.StocksContract.TABLE_NAME, null, values);
+        }
         db.close();
+        adapter.notifyDataSetChanged();
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
     private byte[] getBlobFromDrawable(Drawable image) {
@@ -123,31 +127,7 @@ public class ChartFragment extends Fragment implements ResponseListener<Drawable
         return out.toByteArray();
     }
 
-    private void firstTimeSetup(){
 
-    }
 
-    @Override
-    public void respondToSetup() {
-
-    }
-
-    private class SetupTask extends AsyncTask<Void, Void, Void> {
-        SetupListener listener;
-
-        public SetupTask(SetupListener listener){
-            this.listener = listener;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void v){
-            listener.respondToSetup();
-        }
-    }
 
 }

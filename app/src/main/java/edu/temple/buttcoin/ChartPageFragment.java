@@ -36,31 +36,14 @@ public class ChartPageFragment extends Fragment {
             Cursor c = db.query(BitcoinDbHelper.StocksContract.TABLE_NAME,
                     new String[]{BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D},
                     null, null, null, null, null);
-            c.moveToFirst();
-            for(int i=0; i < getArguments().getInt(CHART); i++) c.moveToNext();
-            image.setImageBitmap(BitmapFactory.decodeByteArray(c.getBlob(0), 0, c.getBlob(0).length));
+            if(c.moveToFirst()) {
+                for (int i = 0; i < getArguments().getInt(CHART); i++) c.moveToNext();
+                image.setImageBitmap(BitmapFactory.decodeByteArray(c.getBlob(0), 0, c.getBlob(0).length));
+            }
             db.close();
         }
         return v;
     }
 
-    private String getColumnName(int pos){
-        String s = "";
-        switch(pos){
-            case 0:
-                s = BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D;
-                break;
-            case 1:
-                s = BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1W;
-                break;
-            case 2:
-                s = BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART2W;
-                break;
-            case 3:
-                s = BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1M;
-                break;
-        }
-        return s;
-    }
 
 }
