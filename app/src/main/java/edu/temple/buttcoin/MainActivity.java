@@ -1,11 +1,13 @@
 package edu.temple.buttcoin;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -55,8 +57,12 @@ public class MainActivity extends AppCompatActivity implements BalanceSelectorFr
                         .commit();
                 dl.closeDrawers();
             }
-        });
+        });//
         getSupportFragmentManager().beginTransaction().replace(R.id.screenFrame, new BlockFragment()).commit();
+        SQLiteDatabase db = new BitcoinDbHelper(this).getWritableDatabase();
+        Log.d("ALL IN ALL YOU WERE", Integer.toString(db.query(BitcoinDbHelper.StocksContract.TABLE_NAME,
+                new String[] {BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D},
+                null, null, null, null, null).getCount()));
     }
 
 

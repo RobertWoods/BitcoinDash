@@ -151,7 +151,9 @@ public class BalanceViewerFragment extends Fragment implements ResponseListener<
 
     @Override
     public void respondToResult(String result) {
+        //TODO technically we should make a separate button to save and not rely on only saving wallets with some bitcoin in them
         ((TextView) getView().findViewById(R.id.walletInfo)).setText("Wallet balance: " + result + " BTC");
+        if(result == null) return;
         if(result.equals("0")) return; //Don't wanna store empty wallets
         BitcoinDbHelper bitcoinDbHelper = new BitcoinDbHelper(getContext());
         ContentValues values = new ContentValues();

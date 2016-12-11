@@ -18,7 +18,7 @@ public class BitcoinDbHelper extends SQLiteOpenHelper implements BaseColumns {
 
 
     private static final String DATABASE_NAME = "owo.db";
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 13;
 
     public BitcoinDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DB_VERSION);
