@@ -2,62 +2,102 @@ package edu.temple.buttcoin;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.icu.util.Calendar;
+import android.util.JsonReader;
+import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions and extra parameters.
- */
-public class UpdaterService extends IntentService {
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    public static final String ACTION_FOO = "edu.temple.buttcoin.action.FOO";
-    public static final String ACTION_BAZ = "edu.temple.buttcoin.action.BAZ";
 
-    // TODO: Rename parameters
-    public static final String EXTRA_PARAM1 = "edu.temple.buttcoin.extra.PARAM1";
-    public static final String EXTRA_PARAM2 = "edu.temple.buttcoin.extra.PARAM2";
+public class UpdaterService extends IntentService implements ResponseListener<Drawable[]> {
+
+    private final String API_URL = "https://chart.yahoo.com/z?s=BTCUSD=X&t=";
 
     public UpdaterService() {
         super("UpdaterService");
     }
-    private int hour = 1000 * 60 * 60;
-    private int day  = hour * 24;
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        AlarmManager alarmManager = (AlarmManager) getApplicationContext().
-                getSystemService(Context.ALARM_SERVICE);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(cal.getTime());
-        cal.add(Calendar.HOUR, 1);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), hour, null);
-
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (ACTION_FOO.equals(action)) {
-                handleChartUpdate();
-            } else if (ACTION_BAZ.equals(action)) {
-                handleWalletsUpdate();
-            }
-        }
+        handleChartUpdate();
     }
 
     private void handleChartUpdate() {
-
+        BitcoinDbHelper dbHelper = new BitcoinDbHelper(this);
+        dbHelper.getWritableDatabase();
+        startChartFetcher();
     }
 
-    private void handleWalletsUpdate() {
+    private void startChartFetcher() {
 
+        Fetcher<Drawable[]> fetcher = new Fetcher<Drawable[]>(this) {
+            @Override
+            protected Drawable[] getDataFromReader(JsonReader reader) throws IOException {
+                return null;
+            }
+
+            @Override
+            protected Drawable[] doInBackground(URL... urls) {
+                Drawable[] data = new Drawable[4];
+                String[] key = new String[] {"1d", "7d", "14d", "30d"};
+                try {
+                    for(int i=0; i<data.length; i++) {
+                        data[i] = Drawable.createFromStream((InputStream)
+                                new URL(API_URL+key[i]).getContent(), "");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+                return data;
+            }
+        };
+        fetcher.execute();
     }
 
+
+    @Override
+    public void respondToResult(Drawable[] results) {
+        Log.d("UpdaterService", "We fetched it so good daddy");
+        BitcoinDbHelper dbHelper = new BitcoinDbHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        boolean hasData = db.query(BitcoinDbHelper.StocksContract.TABLE_NAME,
+                new String[] {BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D},
+                null, null, null, null, null).getCount() != 0;
+        int i = 1;
+        String[] args = {"1", "2", "3", "4"};
+        for(Drawable d : results) {
+            ContentValues values = new ContentValues();
+            values.put(BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D,
+                    getBlobFromDrawable(d));
+            if(hasData){
+                String where = BitcoinDbHelper.StocksContract.COLUMN_NAME_ID + "= ?";
+                db.update(BitcoinDbHelper.StocksContract.TABLE_NAME, values, where,
+                        new String[]{ args[i-1] } );
+            } else {
+                values.put(BitcoinDbHelper.StocksContract.COLUMN_NAME_ID, i);
+                db.insert(BitcoinDbHelper.StocksContract.TABLE_NAME, null, values);
+            }
+            i++;
+        }
+        db.close();
+    }
+
+    private byte[] getBlobFromDrawable(Drawable image) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ((BitmapDrawable) image).getBitmap().compress(Bitmap.CompressFormat.PNG, 100, out);
+        return out.toByteArray();
+    }
 
 }

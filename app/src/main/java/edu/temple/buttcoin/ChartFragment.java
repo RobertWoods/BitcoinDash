@@ -104,17 +104,21 @@ public class ChartFragment extends Fragment implements ResponseListener<Drawable
                 null, null, null, null, null).getCount() == 0){
                 startChartFetcher();
         }
+        db.close();
     }
 
     @Override
     public void respondToResult(Drawable[] results) {
         BitcoinDbHelper dbHelper = new BitcoinDbHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int i = 1;
         for(Drawable d : results) {
             ContentValues values = new ContentValues();
             values.put(BitcoinDbHelper.StocksContract.COLUMN_NAME_CHART1D,
                     getBlobFromDrawable(d));
+            values.put(BitcoinDbHelper.StocksContract.COLUMN_NAME_ID, i);
             db.insert(BitcoinDbHelper.StocksContract.TABLE_NAME, null, values);
+            i++;
         }
         db.close();
         adapter.notifyDataSetChanged();
