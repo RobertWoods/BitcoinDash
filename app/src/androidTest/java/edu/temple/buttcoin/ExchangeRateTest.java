@@ -2,6 +2,7 @@ package edu.temple.buttcoin;
 
 
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -24,6 +25,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -33,7 +35,7 @@ public class ExchangeRateTest {
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void mainActivityTest() {
+    public void exchangeFragmentTest() {
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Ir"),
                         withParent(allOf(withId(R.id.toolbar),
@@ -49,6 +51,12 @@ public class ExchangeRateTest {
                                 2),
                         isDisplayed()));
         appCompatTextView.perform(click());
+
+        ViewInteraction exchangeTestView = onView(
+                allOf(withId(R.id.exchangeInfo), isDisplayed()));
+        //Test if it's clickeable to check if it exists. If the fetcher does not fetch results from
+        //the api it will remove the textview, causing this to fail
+        exchangeTestView.perform(click());
 
     }
 

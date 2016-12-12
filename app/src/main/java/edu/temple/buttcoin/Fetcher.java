@@ -21,6 +21,8 @@ public abstract class Fetcher<T> extends AsyncTask<URL, Void, T> {
         this.listener = listener;
     }
 
+
+
     @Override
     protected T doInBackground(URL... urls) {
         T result = null;

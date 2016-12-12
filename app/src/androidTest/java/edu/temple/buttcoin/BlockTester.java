@@ -26,7 +26,7 @@ public class BlockTester {
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void mainActivityTest3() {
+    public void testBlockFetch() {
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.blockInput), isDisplayed()));
         appCompatEditText.perform(replaceText("123456"), closeSoftKeyboard());
@@ -34,6 +34,10 @@ public class BlockTester {
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.getBlockButton), isDisplayed()));
         appCompatButton.perform(click());
+
+        ViewInteraction pager = onView(
+                allOf(withId(R.id.blockViewer), isDisplayed()));
+        pager.perform(click());
 
     }
 

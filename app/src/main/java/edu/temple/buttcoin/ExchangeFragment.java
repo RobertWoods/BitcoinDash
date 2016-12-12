@@ -71,6 +71,10 @@ public class ExchangeFragment extends Fragment implements ResponseListener<Array
         String s = "";
         int i = 0;
         String[] titles = getResources().getStringArray(R.array.ticker_titles);
+        if(result == null || result.size() == 0) {
+            ((ViewGroup) getView()).removeView(getView().findViewById(R.id.exchangeInfo));
+            return;
+        }
         for(Double d : result)  s+=titles[i++]+d+"\n";
         ((TextView) getView().findViewById(R.id.exchangeInfo)).setText(s);
     }

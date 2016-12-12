@@ -4,6 +4,7 @@ package edu.temple.buttcoin;
 import android.app.Instrumentation;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -19,6 +20,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -36,7 +39,7 @@ import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityTest {
+public class WalletBalanceTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -50,7 +53,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void mainActivityTest() {
+    public void testBalanceFragmentFetchAndSave() {
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Ir"),
                         withParent(allOf(withId(R.id.toolbar),
@@ -95,6 +98,7 @@ public class MainActivityTest {
                 allOf(withText(containsString("1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX")), isDisplayed()));
         //Will throw NoMatchingViewException if our wallet wasn't stored
         linearLayout2.perform(click());
+
 
     }
 
