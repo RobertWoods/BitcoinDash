@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements BalanceSelectorFr
         ListView lv = (ListView) findViewById(R.id.drawer);
         dl = (DrawerLayout) findViewById(R.id.drawerLayout);
         lv.setAdapter(adapter);
-        drawerToggle = new ActionBarDrawerToggle(this, dl, toolbar, R.string.go_button, R.string.hello_blank_fragment);
+        drawerToggle = new ActionBarDrawerToggle(this, dl, toolbar, R.string.go_button, R.string.blank_message);
         dl.addDrawerListener(drawerToggle);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

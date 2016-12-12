@@ -13,6 +13,7 @@ import android.util.Log;
  */
 
 public class StartupReceiver extends BroadcastReceiver {
+    boolean testFlag = false;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -33,6 +34,7 @@ public class StartupReceiver extends BroadcastReceiver {
                     serviceIntent, PendingIntent.FLAG_CANCEL_CURRENT);
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                     hour, pendingIntent);
+            testFlag = true;
         }
     }
 

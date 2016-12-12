@@ -28,6 +28,7 @@ public class BalanceSelectorFragment extends Fragment {
     SelectionListener listener;
     SQLiteDatabase db;
     HashMap<String, String> wallets;
+    BaseAdapter adapter;
 
     public BalanceSelectorFragment() {
         // Required empty public constructor
@@ -43,7 +44,7 @@ public class BalanceSelectorFragment extends Fragment {
         db = dbHelper.getWritableDatabase();
         wallets = getWallets();
 //        insertNewWallet(12, "1JEiV9CiJmhfYhE7MzeSdmH82xRYrbYrtb");
-        final BaseAdapter adapter = new BaseAdapter() {
+        adapter = new BaseAdapter() {
             @Override
             public int getCount() {
                 return wallets.size()+2;
@@ -107,6 +108,13 @@ public class BalanceSelectorFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        wallets = getWallets();
+        adapter.notifyDataSetChanged();
+    }
+
     private void insertNewWallet(int balance, String walletId) {
             if (!wallets.containsKey(walletId)) {
             ContentValues values = new ContentValues();
@@ -125,13 +133,15 @@ public class BalanceSelectorFragment extends Fragment {
                         BitcoinDbHelper.AddressesContract.COLUMN_NAME_BALANCE},
                 null, null, null, null, null
         );
+        if(c.getCount()==0) return wallets;
         c.moveToFirst();
-        while (c.moveToNext()) {
+        do  {
             wallets.put(c.getString(c.getColumnIndex(
                     BitcoinDbHelper.AddressesContract.COLUMN_NAME_NUMBER)),
                     c.getString(c.getColumnIndex(
                             BitcoinDbHelper.AddressesContract.COLUMN_NAME_BALANCE)));
-        }
+        } while (c.moveToNext());
+
         return wallets;
     }
 

@@ -1,15 +1,12 @@
 package edu.temple.buttcoin;
 
-import android.app.AlarmManager;
 import android.app.IntentService;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.icu.util.Calendar;
 import android.util.JsonReader;
 import android.util.Log;
 

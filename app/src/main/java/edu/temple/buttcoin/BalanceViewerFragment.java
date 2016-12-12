@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -152,20 +153,37 @@ public class BalanceViewerFragment extends Fragment implements ResponseListener<
     @Override
     public void respondToResult(String result) {
         //TODO technically we should make a separate button to save and not rely on only saving wallets with some bitcoin in them
-        ((TextView) getView().findViewById(R.id.walletInfo)).setText("Wallet balance: " + result + " BTC");
         if(result == null) return;
-        if(result.equals("0")) return; //Don't wanna store empty wallets
+        ((TextView) getView().findViewById(R.id.walletInfo)).setText(
+                getResources().getString(R.string.wallet_balance_displayer, result));
         BitcoinDbHelper bitcoinDbHelper = new BitcoinDbHelper(getContext());
+        SQLiteDatabase db = bitcoinDbHelper.getWritableDatabase();
+
+        //Prepare for insertion/update
         ContentValues values = new ContentValues();
         values.put(BitcoinDbHelper.AddressesContract.COLUMN_NAME_NUMBER, currentWallet);
         values.put(BitcoinDbHelper.AddressesContract.COLUMN_NAME_BALANCE, result);
-        SQLiteDatabase db = bitcoinDbHelper.getWritableDatabase();
-        db.insertOrThrow(BitcoinDbHelper.AddressesContract.TABLE_NAME, null, values);
+        Cursor c = db.query(BitcoinDbHelper.AddressesContract.TABLE_NAME,
+                new String[] { BitcoinDbHelper.AddressesContract.COLUMN_NAME_ID },
+                BitcoinDbHelper.AddressesContract.COLUMN_NAME_NUMBER + "= ?",
+                new String[] { currentWallet },
+                null, null, null);
+        if(c.getCount() == 0) {
+            db.insertOrThrow(BitcoinDbHelper.AddressesContract.TABLE_NAME, null, values);
+        } else {
+            c.moveToFirst();
+            db.update(BitcoinDbHelper.AddressesContract.TABLE_NAME,
+                    values,
+                    BitcoinDbHelper.AddressesContract.COLUMN_NAME_ID + "= ?",
+                    new String[] { c.getString(0) });
+        }
+        db.close();
     }
 
     public void showWalletAddress(String walletId, String balance) {
         ((EditText) getView().findViewById(R.id.walletInput)).setText(walletId);
-        ((TextView) getView().findViewById(R.id.walletInfo)).setText("Wallet balance: " + balance + " BTC");
+        ((TextView) getView().findViewById(R.id.walletInfo)).setText(
+                getResources().getString(R.string.wallet_balance_displayer, balance));
     }
 
     public interface BalanceViewerListener {
