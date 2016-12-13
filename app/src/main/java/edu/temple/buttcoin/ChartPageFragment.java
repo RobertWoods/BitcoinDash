@@ -1,6 +1,7 @@
 package edu.temple.buttcoin;
 
 
+import android.app.Instrumentation;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;

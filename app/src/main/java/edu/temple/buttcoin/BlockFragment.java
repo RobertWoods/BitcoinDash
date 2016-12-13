@@ -117,6 +117,10 @@ public class BlockFragment extends Fragment implements ResponseListener<String[]
     @Override
     public void respondToResult(String[][] result) {
         currentBlocks = result;
+        if(result == null){
+            ((ViewGroup) getView()).removeView(getView().findViewById(R.id.blockViewer));
+            return;
+        }
         pagerAdapter.notifyDataSetChanged();
         pager.setCurrentItem(2);
     }

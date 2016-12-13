@@ -1,6 +1,9 @@
 package edu.temple.buttcoin;
 
 
+import android.app.Instrumentation;
+import android.database.sqlite.SQLiteDatabase;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -12,6 +15,7 @@ import android.view.ViewParent;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +36,14 @@ public class ChartTester {
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
+    @Before
+    public void setup(){
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        BitcoinDbHelper dbHelper = new BitcoinDbHelper(instrumentation.getTargetContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper.onUpgrade(db, 0, 0);
+    }
+
     @Test
     public void chartTester() {
         ViewInteraction appCompatImageButton = onView(
@@ -50,6 +62,10 @@ public class ChartTester {
                         isDisplayed()));
         appCompatTextView.perform(click());
 
+        ViewInteraction graphs = onView(
+                allOf(withId(R.id.chartGraph), isDisplayed()));
+        //Crashes if fetcher returned null and view was removed
+        graphs.perform(click());
     }
 
     private static Matcher<View> childAtPosition(

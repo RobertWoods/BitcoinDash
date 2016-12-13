@@ -37,6 +37,7 @@ public class BlockTester {
 
         ViewInteraction pager = onView(
                 allOf(withId(R.id.blockViewer), isDisplayed()));
+        //Fails test if fetcher returned null
         pager.perform(click());
 
     }

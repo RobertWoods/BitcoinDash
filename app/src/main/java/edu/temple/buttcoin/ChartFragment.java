@@ -104,6 +104,10 @@ public class ChartFragment extends Fragment implements ResponseListener<Drawable
 
     @Override
     public void respondToResult(Drawable[] results) {
+        if(results == null){
+            ((ViewGroup) getView()).removeView(getView().findViewById(R.id.chartGraph));
+            return;
+        }
         BitcoinDbHelper dbHelper = new BitcoinDbHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int i = 1;
